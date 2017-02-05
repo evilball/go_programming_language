@@ -28,22 +28,18 @@ func main() {
 			bx, by := corner(i, j)
 			cx, cy := corner(i, j+1)
 			dx, dy := corner(i+1, j+1)
-			if !isValid(ax, ay, bx, by, cx, cy, dx, dy) {
-				continue
-			}
 			fmt.Printf("<polygon points='%g, %g %g, %g %g, %g %g, %g'/>\n",
 				ax, ay, bx, by, cx, cy, dx, dy)
 		}
 	}
 	fmt.Println("</svg>")
 }
-func isValid(numbers... float64) bool {
-	for _, i := range numbers {
-		if math.IsInf(i, 0) || math.IsNaN(i) {
-			return false
-		}
+func isValid(number float64) bool {
+	if math.IsInf(number, 0) || math.IsNaN(number) {
+		return false
+	} else {
+		return true
 	}
-	return true
 }
 
 func corner(i, j int) (float64, float64) {
@@ -59,5 +55,11 @@ func corner(i, j int) (float64, float64) {
 
 func f(x, y float64) float64 {
 	r := math.Hypot(x, y)
-	return math.Sin(r)/r
+	result := math.Sin(r)/r
+	if isValid(result) {
+		return result
+	} else {
+		return 0
+	}
+
 }
