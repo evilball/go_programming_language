@@ -69,5 +69,4 @@ func f(x, y float64) float64 {
 	} else {
 		return 0
 	}
-
 }

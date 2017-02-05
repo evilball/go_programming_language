@@ -25,6 +25,7 @@ const (
 
 var sin30, cos30 = math.Sin(angle), math.Cos(angle)
 var width, height int
+var xyscale, zscale float64
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -50,14 +51,17 @@ func main() {
 			height = defaultWidth
 		}
 
+		xyscale = float64(width) / 2 / xyrange
+		zscale = float64(height) * 0.4
+
 		w.Header().Set("Content-Type", "image/svg+xml")
-		createSvg(width, height, w)
+		createSvg(w)
 	})
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
-func createSvg(width, length int, out io.Writer) {
-	fmt.Fprintf(out, "<svg	xmlns='http://www.w3.org/2000/svg' style='stroke: grey; strokewidth: 0.7' width='%d' height='%d'>", width, length)
+func createSvg(out io.Writer) {
+	fmt.Fprintf(out, "<svg	xmlns='http://www.w3.org/2000/svg' style='stroke: grey; strokewidth: 0.7' width='%d' height='%d'>", width, height)
 	for i := 0; i < cells; i++ {
 		for j := 0; j < cells; j++ {
 			ax, ay, belowZero := corner(i+1, j)
@@ -91,8 +95,6 @@ func corner(i, j int) (float64, float64, bool) {
 	y := xyrange * (float64(j)/cells - 0.5)
 	z := f(x, y)
 
-	xyscale := float64(width) / 2 / xyrange
-	zscale := float64(height) * 0.4
 	sx := float64(width)/2 + (x-y)*cos30*xyscale
 	sy := float64(height)/2 + (x+y)*sin30*xyscale - z*zscale
 	belowZero := z < 0
